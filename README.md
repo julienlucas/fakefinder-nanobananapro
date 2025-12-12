@@ -1,19 +1,46 @@
 # Fake Image Finder - Nano Banana Pro
 
-Détecteur d'images générées par IA utilisant un modèle MobileNetV3 fine-tuné pour identifier spécifiquement les images créées par **Nano Banana Pro** (modèle d'IA multimodale de Google).
+Détecteur d'images générées par IA utilisant un **transfer learning** avec MobileNetV3 fine-tuné pour identifier spécifiquement les images créées par **Nano Banana Pro** (modèle d'IA multimodale de Google).
 
 ## 🎯 Objectif
 
-Ce projet vise à distinguer les images **réelles** des images **générées par IA**, avec un focus particulier sur la détection des images créées par Nano Banana Pro. Le modèle est entraîné en deux étapes :
+Ce projet vise à distinguer les images **réelles** des images **générées par IA**, avec un focus particulier sur la détection des images créées par Nano Banana Pro. Le modèle utilise une approche de **transfer learning** en deux étapes :
 
 1. **Entraînement initial** : Détection générale d'images fake (Stable Diffusion, Midjourney, DALL-E)
 2. **Fine-tuning** : Adaptation spécifique pour détecter les images Nano Banana Pro
 
+## 🔄 Transfer Learning - Point Clé du Projet
+
+Ce projet repose entièrement sur une stratégie de **transfer learning** en cascade :
+
+### Étape 1 : Pré-entraînement ImageNet
+- **Modèle de base** : MobileNetV3-Large pré-entraîné sur ImageNet
+- **Connaissances transférées** : Features génériques de reconnaissance d'images (bords, textures, formes)
+
+### Étape 2 : Transfer Learning vers la détection fake/real
+- **Source** : Modèle ImageNet
+- **Cible** : Détection générale d'images fake (SD, Midjourney, DALL-E)
+- **Méthode** : Fine-tuning du classifier (features extractor gelé)
+- **Résultat** : `best_model_midjourney_dalle_sd.pth`
+
+### Étape 3 : Transfer Learning vers Nano Banana Pro
+- **Source** : Modèle fine-tuné SD/Midjourney/DALL-E
+- **Cible** : Détection spécifique Nano Banana Pro
+- **Méthode** : Fine-tuning du classifier avec learning rate réduit (0.0005)
+- **Résultat** : `best_model_nanobanana_pro.pth`
+
+**Avantages du transfer learning** :
+- ✅ Réutilisation des connaissances pré-existantes
+- ✅ Entraînement rapide avec peu de données
+- ✅ Meilleures performances que l'entraînement from scratch
+- ✅ Adaptation progressive du modèle général vers le cas spécifique
+
 ## 🏗️ Architecture
 
-- **Modèle de base** : MobileNetV3-Large
-- **Pré-entraînement** : ImageNet
-- **Fine-tuning** : Classifier uniquement (features gelées)
+- **Modèle de base** : MobileNetV3-Large (transfer learning depuis ImageNet)
+- **Pré-entraînement** : ImageNet (1.4M images, 1000 classes)
+- **Transfer learning** : Cascade en 3 étapes (ImageNet → Fake général → Nano Banana Pro)
+- **Fine-tuning** : Classifier uniquement (features extractor gelé)
 - **Classes** : 2 (Real / Fake)
 - **Résolution d'entrée** : 224x224
 
@@ -21,7 +48,7 @@ Ce projet vise à distinguer les images **réelles** des images **générées pa
 
 ```
 fake_image_finder/
-├── AIvsReal_sampled/          # Dataset initial (SD, Midjourney, DALL-E)
+├── AIvsReal_midjourney_dalle_sd/ # Dataset initial (SD, Midjourney, DALL-E)
 │   ├── train/
 │   │   ├── fake/
 │   │   └── real/
@@ -35,10 +62,10 @@ fake_image_finder/
 │   └── test/
 │       ├── fake/              # 500 images
 │       └── real/
-├── train.py                    # Entraînement initial
+├── train_finetune_midjourney_dalle_sd.py # Entraînement initial
 ├── train_finetune_nanobananapro.py  # Fine-tuning Nano Banana Pro
 ├── inference.py                # Inférence avec Grad-CAM
-├── inference_check_fulldataset.py  # Évaluation complète du dataset
+├── inference_check_test_dataset.py  # Évaluation complète du test dataset
 ├── models/
 │   ├── best_model_midjourney_dalle_sd.pth # Modèle initial (SD/Midjourney/DALL-E)
 │   ├── best_model_nanobanana.pth   # Modèle fine-tuné Nano Banana Pro
@@ -60,20 +87,22 @@ uv sync
 
 ### Entraînement
 
-#### 1. Entraînement initial (SD, Midjourney, DALL-E)
+#### 1. Transfer Learning initial (SD, Midjourney, DALL-E)
 
 ```bash
 python train.py
 ```
 
+**Transfer learning** depuis ImageNet vers la détection générale d'images fake.
 Génère `models/best_model_midjourney_dalle_sd.pth` - modèle de base pour détecter les images fake générales.
 
-#### 2. Fine-tuning pour Nano Banana Pro
+#### 2. Transfer Learning vers Nano Banana Pro
 
 ```bash
 python train_finetune_nanobananapro.py
 ```
 
+**Transfer learning** depuis le modèle SD/Midjourney/DALL-E vers Nano Banana Pro.
 Génère `models/best_model_nanobanana_pro.pth` - modèle adapté pour Nano Banana Pro.
 
 **Configuration du fine-tuning :**
@@ -149,6 +178,7 @@ Les images Nano Banana Pro utilisées pour l'entraînement ont été collectées
 
 ## 📝 Notes Techniques
 
+- **Approche** : Transfer Learning en cascade (ImageNet → Fake général → Nano Banana Pro)
 - **Device** : MPS (Apple Silicon) ou CPU
 - **Framework** : PyTorch
 - **Optimiseur** : Adam (lr=0.0005)
@@ -157,6 +187,7 @@ Les images Nano Banana Pro utilisées pour l'entraînement ont été collectées
 
 ## 🎨 Fonctionnalités
 
+- ✅ **Transfer Learning** en cascade (ImageNet → Fake général → Nano Banana Pro)
 - ✅ Détection d'images fake/real
 - ✅ Visualisation Grad-CAM pour comprendre les décisions
 - ✅ Fine-tuning spécifique Nano Banana Pro

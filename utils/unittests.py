@@ -28,7 +28,7 @@ def exercise_1_fakefinder_transferlearning(learner_func):
             return [t]
 
         expected_type = ImageFolder
-        dataset_path = "./AIvsReal_sampled"
+        dataset_path = "./AIvsReal_midjourney_dalle_sd"
         train_path = dataset_path + "/train"
         val_path = dataset_path + "/test"
 

@@ -168,10 +168,6 @@ def training_loop_with_best_model(model, train_loader, val_loader, loss_fcn, opt
             torch.save(model.state_dict(), best_model_path)
             print(f"Nouveau meilleur modèle sauvegardé dans {best_model_path} avec Précision Val: {best_val_accuracy * 100:.2f}%\n")
 
-        # Met à jour le scheduler si fourni
-        if scheduler is not None:
-            scheduler.step()
-
     # Affiche un message indiquant la fin de l'entraînement.
     print("\nEntraînement terminé. Meilleur modèle entraîné retourné.")
     print(f"Meilleure Exactitude Val: {best_val_accuracy * 100:.2f}%")

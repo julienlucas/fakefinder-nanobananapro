@@ -175,6 +175,10 @@ def predict_and_draw_gradcam_bbox(model, image_path, device, class_names=None, k
     handle.remove()
 
     # Calcule la heatmap Grad-CAM
+    # La heatmap montre les régions de l'image qui ont le plus influencé la prédiction
+    # Plus c'est rouge/intense, plus cette zone a contribué à la décision
+    # Pour "real": zones avec textures naturelles, détails fins, cohérence des ombres/reflets
+    # Pour "fake": zones suspectes, textures lisses, incohérences, artéfacts de génération
     cam = (gradients.mean(dim=(2, 3), keepdim=True) * activations).sum(dim=1, keepdim=True)
     cam = F.relu(F.interpolate(cam, size=(224, 224), mode="bilinear", align_corners=False))[0, 0]
     cam = cam / (cam.max() + 1e-8)
@@ -224,7 +228,7 @@ def predict_and_draw_gradcam_bbox(model, image_path, device, class_names=None, k
 
 
 model_path = "./models/best_model_nanobanana_pro.pth"
-image_path = './images/real/IMG_6396.jpg'
+image_path = './images/fake/45180048-3fd8-441f-874f-c8a9b56b5b02_min.webp'
 
 trained_model = load_mobilenetv3_model(model_path, num_classes=2)
 trained_model = trained_model.to(DEVICE)
