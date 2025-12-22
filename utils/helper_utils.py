@@ -4,6 +4,7 @@ from .data import (
 )
 from .visualization import (
     display_images,
+    display_images_from_dataloader,
     display_train_images,
     plot_training_metrics
 )

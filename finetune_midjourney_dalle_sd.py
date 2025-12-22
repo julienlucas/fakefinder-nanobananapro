@@ -294,13 +294,13 @@ loss_fcn = nn.CrossEntropyLoss()
 optimizer = optim.Adam(filter(lambda p: p.requires_grad, mobilenet_model.parameters()), lr=0.001)
 
 # Entraîne le modèle
-trained_model = helper_utils.training_loop_with_best_model(
-    mobilenet_model,
-    train_loader,
-    val_loader,
-    loss_fcn,
-    optimizer,
-    DEVICE,
-    num_epochs=1,
-    model_name="best_model_midjourney_dalle_sd.pth"
-)
+# trained_model = helper_utils.training_loop_with_best_model(
+#     mobilenet_model,
+#     train_loader,
+#     val_loader,
+#     loss_fcn,
+#     optimizer,
+#     DEVICE,
+#     num_epochs=1,
+#     model_name="best_model_midjourney_dalle_sd.pth"
+# )

@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+import torchvision.utils as vutils
 from PIL import Image, UnidentifiedImageError
 
 
@@ -69,7 +70,9 @@ def display_images(
     elif grid is not None:
         if isinstance(grid, torch.Tensor):
             plt.figure(figsize=figsize)
-            plt.imshow(grid.permute(1, 2, 0))
+            grid_np = grid.permute(1, 2, 0).numpy()
+            grid_np = np.clip(grid_np, 0, 1)
+            plt.imshow(grid_np)
             plt.axis('off')
             plt.show()
 
@@ -80,6 +83,25 @@ def display_images(
             ax.set_title(title)
             ax.axis('off')
         plt.tight_layout()
+    plt.show()
+
+
+def display_images_from_dataloader(dataloader, figsize=(10, 10), nrow=4):
+    """
+    Récupère un batch d'images depuis un DataLoader, les arrange en grille et les affiche.
+
+    Args:
+        dataloader (DataLoader): Le DataLoader PyTorch depuis lequel récupérer les images.
+        figsize (tuple, optional): La taille de la figure pour l'affichage. Par défaut (10, 10).
+        nrow (int, optional): Nombre d'images à afficher dans chaque ligne de la grille. Par défaut 4.
+    """
+    images, _ = next(iter(dataloader))
+
+    grid = vutils.make_grid(images, nrow=nrow, padding=2, normalize=True)
+
+    plt.figure(figsize=figsize)
+    plt.imshow(grid.permute(1, 2, 0))
+    plt.axis('off')
     plt.show()
 
 

@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision.models as tv_models
 import torchvision.transforms as transforms
+import torchvision.utils as vutils
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 
@@ -20,7 +21,7 @@ IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225])
 # Charge le chemin du dataset
 dataset_path = "./AIvsReal_nanobanana_pro"
 # Analyse les splits du dataset au chemin donné et affiche un compte des images pour chaque classe.
-helper_utils.dataset_images_per_class(dataset_path)
+# helper_utils.dataset_images_per_class(dataset_path)
 
 
 # Sélectionne aléatoirement et affiche une grille d'images d'échantillons depuis le dossier 'train'.
@@ -80,6 +81,22 @@ def create_data_loaders(trainset, valset, batch_size):
     return train_loader, val_loader, trainset, valset
 
 
+
+# Affiche les transformations composées pour vérifier la séquence des opérations
+# print("Transformations d'entraînement augmentées:\n")
+# print(combined_transformations[0])
+# print("\nTransformations de validation:\n")
+# print(combined_transformations[1])
+temp_train, temp_val = create_dataset_splits(dataset_path)
+dataloaders = create_data_loaders(temp_train, temp_val, batch_size=16)
+# print("--- DataLoader d'entraînement ---")
+# helper_utils.display_data_loader_contents(dataloaders[0])
+# print("\n--- DataLoader de validation ---")
+# helper_utils.display_data_loader_contents(dataloaders[1])
+
+helper_utils.display_images_from_dataloader(dataloaders[0], mean=IMAGENET_MEAN.tolist(), std=IMAGENET_STD.tolist())
+
+
 def load_mobilenetv3_model(weights_path, num_classes=None):
     """
     Charge un modèle MobileNetV3-Large pré-entraîné depuis torchvision.
@@ -99,6 +116,8 @@ def load_mobilenetv3_model(weights_path, num_classes=None):
 
 # 1. Charge le modèle pré-entraîné
 trained_model_path = "./models/best_model_midjourney_dalle_sd.pth"
+# model = tv_models.mobilenet_v3_large(weights=None)
+# print(model)
 trained_model = load_mobilenetv3_model(trained_model_path, num_classes=2)
 
 # 2. Gèle toutes les features, seul le classifier sera entraîné
@@ -125,20 +144,20 @@ optimizer = optim.Adam(trained_model.classifier.parameters(), lr=0.0005)
 
 
 # 6. Entraîne le modèle
-continued_model, metrics = helper_utils.training_loop_with_best_model(
-    trained_model,
-    new_train_loader,
-    new_val_loader,
-    loss_fcn,
-    optimizer,
-    DEVICE,
-    num_epochs=1,
-    model_name="best_model_nanobanana_pro.pth"
-)
+# continued_model, metrics = helper_utils.training_loop_with_best_model(
+#     trained_model,
+#     new_train_loader,
+#     new_val_loader,
+#     loss_fcn,
+#     optimizer,
+#     DEVICE,
+#     num_epochs=1,
+#     model_name="best_model_nanobanana_pro.pth"
+# )
 
 # 7. Trace les courbes de perte et précision
-helper_utils.plot_training_metrics(metrics)
+# helper_utils.plot_training_metrics(metrics)
 
 # 8. Sauvegarde les poids du modèle continué
-torch.save(continued_model.state_dict(), './models/best_model_nanobanana_pro.pth')
-print("Modèle continué sauvegardé : models/best_model_nanobanana_pro.pth")
+# torch.save(continued_model.state_dict(), './models/best_model_nanobanana_pro.pth')
+# print("Modèle continué sauvegardé : models/best_model_nanobanana_pro.pth")

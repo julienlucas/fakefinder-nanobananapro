@@ -225,7 +225,7 @@ def predict_and_draw_gradcam_bbox(model, image_path, device, class_names=None, k
     return pred_label, conf, boxes[0]
 
 
-model_path = "./models/best_model_midjourney_dalle_sd.pth"
+model_path = "./models/best_model_nanobanana_pro.pth"
 image_path = './images/fake/abc85fe7-a3c2-4374-931a-4bee66bd4d9d_min.webp'
 
 trained_model = load_mobilenetv3_model(model_path, num_classes=2)

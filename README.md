@@ -56,6 +56,16 @@ uv run python download_dataset_images.py julienlucas/midjourney-dalle-sd-dataset
 uv run python download_dataset_images.py julienlucas/nanobanana-pro-dataset ./AIvsReal_nanobanana_pro
 ```
 
+## 📥 Sources des Images Nano Banana Pro
+
+Collectées depuis :
+
+- **[YouMind](https://youmind.com/fr-FR/nano-banana-pro-prompts)** - Collection de prompts et images Nano Banana Pro
+- **[Higgsfield.ai](https://higgsfield.ai/nano-banana-pro-preview)** - Aperçu et exemples Nano Banana Pro
+- **[Awesome Nano Banana Pro (GitHub)](https://github.com/ZeroLu/awesome-nanobanana-pro)** - Collection open-source d'exemples
+- **[PromptGather.io](https://promptgather.io)** - Plateforme de collecte de prompts Nano Banana Pro
+- **[Google Sheets - PromptGather](https://docs.google.com/spreadsheets/d/1GAp_yaqAX9y_K8lnGQw9pe_BTpHZehoonaxi4whEQIE/edit?gid=116507383#gid=116507383)** - Base de données de prompts avec images
+
 ## 🎓 Entraînement (Transfer Learning)
 
 ### 1. Fine-tuning initial (SD/Midjourney/DALL-E)
